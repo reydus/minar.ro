@@ -46,6 +46,8 @@
                 <div class="col-l`g-6 mb-lg-0 aos-init aos-animate mx-auto" data-aos="fade-up" style="padding-left: 50px; padding-right: 50px">
                  <h2>Welcome!</h2>
                  <p class="mb-0">
+                 <span>Server status: <span id="serverStatus"></span>
+                 <br><br>
                  </p><p>This website is currently under development, so you won't see much here for a while.</p>
                  <br>
                   <p>Esta página web está bajo desarrollo. Por lo cual no verás mucho por un tiempo.</p>
@@ -66,6 +68,59 @@
                 </div>
                </main>
                <footer class="footer" role="contentinfo">
+                <!--
+                <script>
+                  function loadFile(filePath) {
+                    var result = null;
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.open("GET", filePath, false);
+                    xmlhttp.send();
+
+                    if (xmlhttp.status==200) {
+                      result = xmlhttp.responseText;
+                    }
+                    return result;
+                  }
+
+                loadFile("./serverStatus.txt").then((response) => console.log(response))
+                </script>
+                -->
+                <script>
+
+function myFunction(a, b) {
+  return "aaa"
+}
+
+function readTextFile(file) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    console.log("a")
+    rawFile.onreadystatechange = function ()
+    {
+        console.log("b")
+        if(rawFile.readyState === 4)
+        {
+            console.log("c")
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                console.log("d")
+                var allText = rawFile.responseText;
+                //alert(allText);
+                console.log("The status is "+typeof(allText))
+                return allText
+            }
+        }
+    }
+    //rawFile.send(null);
+}
+
+var status = readTextFile("serverStatus.txt");
+console.log(status)
+if (status === "Online") {
+document.getElementById("serverStatus").innerHTML = "<span style=\"color:green;\">Online</span>";
+}
+
+</script>
                 <div class="container">
                  <div class="row">
                   <div class="col-sm-6">
