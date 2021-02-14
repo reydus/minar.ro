@@ -1,3 +1,242 @@
-Surprise!
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Line Chart</title>
+    <script src="../js/moment.js"></script>
+    <script src="./chartjs/dist/chart.min.js"></script>
+	<script src="./utils.js"></script>
+	<style>
+		canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+		.chart-container {
+			width: 500px;
+			margin-left: 40px;
+			margin-right: 40px;
+		}
+		.container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+	</style>
+<style type="text/css">/* Chart.js */
+@keyframes chartjs-render-animation{from{opacity:.99}to{opacity:1}}.chartjs-render-monitor{animation:chartjs-render-animation 1ms}.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}.chartjs-size-monitor-expand>div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}.chartjs-size-monitor-shrink>div{position:absolute;width:200%;height:200%;left:0;top:0}</style></head>
 
-<a href="./files">Click here for actual files</a>
+<body>
+	<div class="container">
+		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+			<canvas id="canvas-balance" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+		</div>
+		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+			<canvas id="canvas-usage" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+		</div>
+	
+		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+			<canvas id="canvas-usage-smooth" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+		</div>
+		
+		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+			<canvas id="canvas-placeholder2" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+		</div>
+		
+	</div>
+	<script>
+
+        var dataset;
+        var tmsps = [];
+        var measures = [];
+
+        async function getData(){
+            const response = await fetch('./data.csv')
+            var dataset = await response.text();
+            return dataset;
+        };
+
+        getData().then(dataset => {
+            dataset;
+            dataset = dataset.split("\n");
+
+                for (var i = 0; i<dataset.length; i++) {
+                    dataset[i] = dataset[i].split(",");
+                    dataset[i][0] = parseInt(dataset[i][0])
+                    tmsps.push(dataset[i][0])
+                    dataset[i][1] = parseFloat(dataset[i][1])
+                    measures.push(dataset[i][1]);
+                }
+            if (isNaN(tmsps[tmsps.length-1])){
+                tmsps.splice(tmsps.length-1, 1);
+            } 
+            paintGraph();
+
+    });
+
+		//measures_usage = measures_usage * -1;
+
+		// EACH AVERAGE SAMPLE ISN'T REALLY ONE-A-DAY AND THEREFORE THIS ISN'T A 
+		// 7 DAY MOVING AVERAGE.
+
+
+
+		var timeFormat = 'MM/DD/YYYY HH:mm';
+
+		function newDate(days) {
+			return moment().add(days, 'd').toDate();
+		}
+
+		function newDateUNIX(timestamp) {
+			return moment.unix(timestamp)
+		}
+
+		function newDateString(days) {
+			return moment().add(days, 'd').format(timeFormat);
+		}
+
+
+
+		var color = Chart.helpers.color;
+		function createConfig(name, x_label, x_data, y_label, y_data) {
+			//var config = 
+			return {
+				type: 'line',
+				data: {
+					labels: x_data,
+					datasets: [{
+                        lineTension: 0,
+						label: 'My First dataset',
+						backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+						pointRadius: 1,
+						borderCapStyle: "square",
+                        borderColor: window.chartColors.red,
+						fill: false,
+						data: y_data
+					}]
+				},
+				options: {
+					legend: {
+						display: false,
+					},
+					title: {
+						text: name,
+						display: true,
+					},
+					scales: {
+						xAxes: [{
+							type: 'time',
+							time: {
+								parser: timeFormat,
+								tooltipFormat: 'll HH:mm'
+							},
+							scaleLabel: {
+								display: true,
+								labelString: x_label
+							}
+						}],
+						yAxes: [{
+							scaleLabel: {
+								display: true,
+								labelString: y_label
+							}
+						}]
+					},
+				}
+			}
+		};
+		/*
+		window.onload = function() {
+			var ctx = document.getElementById('canvas-balance').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+			var ctx = document.getElementById("canvas-usage").getContext("2d");
+			window.myLine = new Chart(ctx, config);
+			var ctx = document.getElementById("canvas-usage-smooth").getContext("2d");
+			window.myLine = new Chart(ctx, config);
+			var ctx = document.getElementById("canvas-placeholder2").getContext("2d");
+			window.myLine = new Chart(ctx, config);
+
+		};
+		*/
+		//window.onload = function() {
+		function paintGraph() {
+
+            console.log("Paintgraph ex.\n");
+            console.log("Measures has a length of "+measures.length);
+            console.log("tmsps has a length of "+tmsps.length);
+            var exes = [];
+		    for (var i = 0; i < tmsps.length; i++) {
+		    	exes.push(newDateUNIX(tmsps[i]));
+		    };
+            console.log(exes[0]);
+            console.log(exes[exes.length-1]);
+            console.log("exes has a length of "+exes.length);
+            var measures_usage = [];
+
+
+            for (var i = 0; i < measures.length; i++) {
+                if (!(i === 0)) {
+                    measures_usage.push(-1 * (measures[i]-measures[i-1])/((tmsps[i]-tmsps[i-1])/(60*60)));
+                } else {
+                    measures_usage[i] = 0
+                }
+                
+            }
+            for (var i = 0; i < measures_usage.length; i++){
+                    if (measures_usage[i] < 0){
+                        measures_usage[i] = 0
+                    }
+            }
+            var measures_smooth = [];
+            for (var i = 0; i < measures.length; i++) {
+                if (i < 6) {
+                    var sum = 0;
+                    for (var j = 0; j < i+1;j++) {
+                        sum = sum + measures_usage[j];
+                    }
+                    measures_smooth.push(sum/(i+1))
+                } else {
+                    measures_smooth.push(
+                        (measures_usage[i] + measures_usage[i-1] + measures_usage[i-2] + measures_usage[i-3]
+                        + measures_usage[i-4] + measures_usage[i-5] + measures_usage[i-6])/7
+                    )
+                }
+                
+            }
+            [{
+				id: 'canvas-balance',
+				y_label: "Balance (£)",
+				x_data: exes,
+				x_label: "Date",
+				y_data: measures
+			}, {
+				id: 'canvas-usage',
+				x_label: "Date",
+				x_data: exes,
+				y_label: "Power usage (£/hr)",
+				y_data: measures_usage
+			}, {
+				id: 'canvas-usage-smooth',
+				x_data: exes,
+				x_label: "Date",
+				y_data: measures_smooth,
+				y_label: "Power usage (£/hr)",
+			}, {
+				id: 'canvas-placeholder2',
+				x_data: exes,
+				x_label: "Date",
+				y_data: measures_smooth,
+				y_label: "Power usage (£/hr)",
+			}].forEach(function(details) {
+				console.log(details.id+"...")
+				var ctx = document.getElementById(details.id).getContext('2d');
+				var config = createConfig(details.id, details.x_label, details.x_data, details.y_label, details.y_data);
+							//createConfig(name, x_label, x_data, y_label, y_data)
+				new Chart(ctx, config);
+			});
+		};
+	</script>
+
+
+
+</body></html>
