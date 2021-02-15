@@ -1,320 +1,456 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Minarro</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
 
-<!DOCTYPE html>
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<title>Line Chart</title>
-    <script src="../js/moment.js"></script>
-    <script src="./chartjs/dist/Chart.min.js"></script>
-	<script src="./utils.js"></script>
-	<style>
-		canvas {
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			-ms-user-select: none;
-		}
-		.chart-container {
-			width: 75%;
-			margin-left: 40px;
-			margin-right: 40px;
-		}
-		.container {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			justify-content: center;
-		}
-	</style>
-<style type="text/css">/* Chart.js */
-@keyframes chartjs-render-animation{from{opacity:.99}to{opacity:1}}.chartjs-render-monitor{animation:chartjs-render-animation 1ms}.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}.chartjs-size-monitor-expand>div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}.chartjs-size-monitor-shrink>div{position:absolute;width:200%;height:200%;left:0;top:0}</style></head>
+  <!-- Favicons -->
+  <link href="img/favicon.png" rel="icon">
+  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
 
-<body>
-	<div class="container">
-		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-1" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
-		</div>
-		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-2" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
-		</div>
-	
-		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-3" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
-		</div>
-		
-		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-4" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
-		</div>
-		
-	</div>
-	<script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700|Raleway:400,700&amp;display=swap"
+    rel="stylesheet">
 
-        var dataset;
-        var tmsps = [];
-        var measures = [];
+  <!-- Bootstrap CSS File -->
+  <link href="./css/bootstrap.min.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="css/style.css" rel="stylesheet">
+  <script src="../js/moment.js"></script>
+  <script src="./chartjs/dist/Chart.min.js"></script>
+  <script src="./utils.js"></script>
+  <style>
+    canvas {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
 
-        async function getData(){
-            const response = await fetch('./data.csv')
-            var dataset = await response.text();
-            return dataset;
+    .chart-container {
+      width: 75%;
+      margin-left: 40px;
+      margin-right: 40px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  </style>
+  <style type="text/css">
+    /* Chart.js */
+    @keyframes chartjs-render-animation {
+      from {
+        opacity: .99
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    .chartjs-render-monitor {
+      animation: chartjs-render-animation 1ms
+    }
+
+    .chartjs-size-monitor,
+    .chartjs-size-monitor-expand,
+    .chartjs-size-monitor-shrink {
+      position: absolute;
+      direction: ltr;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      pointer-events: none;
+      visibility: hidden;
+      z-index: -1
+    }
+
+    .chartjs-size-monitor-expand>div {
+      position: absolute;
+      width: 1000000px;
+      height: 1000000px;
+      left: 0;
+      top: 0
+    }
+
+    .chartjs-size-monitor-shrink>div {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      left: 0;
+      top: 0
+    }
+  </style>
+</head>
+
+<body data-aos-easing="ease" data-aos-duration="1000" data-aos-delay="0">
+  <nav class="navbar navbar-light custom-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html" style="line-height:32px">R. Minarro.<br><span
+          style="font-size:50%; color:grey;">Engineering | Programming | Designing | Tinkering</span>
+      </a>
+      <div class="col-md-12 col-lg-6 text-left text-lg-right aos-init aos-animate" data-aos="fade-up"
+        data-aos-delay="100"><a class="navbar-brand" href="index.html" style="line-height:32px">
+        </a>
+        <div id="filters" class="filters"><a class="navbar-brand" href="index.html" style="line-height:32px">
+          </a><a href="#" data-filter="*" class="">Home</a>
+          <a href="#" data-filter=".project">Projects</a>
+          <a href="#" data-filter=".photography">Photography</a>
+          <a href="#" data-filter=".CV">CV</a>
+          <a href="https://reyd.us" data-filter=".reydus">Reyd.us</a>
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <div class="container">
+      <div class="chart-container">
+        <div class="chartjs-size-monitor">
+          <div class="chartjs-size-monitor-expand">
+            <div class=""></div>
+          </div>
+          <div class="chartjs-size-monitor-shrink">
+            <div class=""></div>
+          </div>
+        </div>
+        <canvas id="canvas-1" style="display: block; height: 250px; width: 500px;" width="750" height="375"
+          class="chartjs-render-monitor"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chartjs-size-monitor">
+          <div class="chartjs-size-monitor-expand">
+            <div class=""></div>
+          </div>
+          <div class="chartjs-size-monitor-shrink">
+            <div class=""></div>
+          </div>
+        </div>
+        <canvas id="canvas-2" style="display: block; height: 250px; width: 500px;" width="750" height="375"
+          class="chartjs-render-monitor"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <div class="chartjs-size-monitor">
+          <div class="chartjs-size-monitor-expand">
+            <div class=""></div>
+          </div>
+          <div class="chartjs-size-monitor-shrink">
+            <div class=""></div>
+          </div>
+        </div>
+        <canvas id="canvas-3" style="display: block; height: 250px; width: 500px;" width="750" height="375"
+          class="chartjs-render-monitor"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <div class="chartjs-size-monitor">
+          <div class="chartjs-size-monitor-expand">
+            <div class=""></div>
+          </div>
+          <div class="chartjs-size-monitor-shrink">
+            <div class=""></div>
+          </div>
+        </div>
+        <canvas id="canvas-4" style="display: block; height: 250px; width: 500px;" width="750" height="375"
+          class="chartjs-render-monitor"></canvas>
+      </div>
+
+    </div>
+    <script>
+      var dataset;
+      var tmsps = [];
+      var measures = [];
+
+      async function getData() {
+        const response = await fetch('./data.csv')
+        var dataset = await response.text();
+        return dataset;
+      };
+
+      getData().then(dataset => {
+        dataset;
+        dataset = dataset.split("\n");
+
+        for (var i = 0; i < dataset.length; i++) {
+          dataset[i] = dataset[i].split(",");
+          dataset[i][0] = parseInt(dataset[i][0])
+          tmsps.push(dataset[i][0])
+          dataset[i][1] = parseFloat(dataset[i][1])
+          measures.push(dataset[i][1]);
+        }
+        if (isNaN(tmsps[tmsps.length - 1])) {
+          tmsps.splice(tmsps.length - 1, 1);
+        }
+        if (isNaN(measures[measures.length - 1])) {
+          measures.splice(measures.length - 1, 1);
+        }
+        paintGraph();
+
+      });
+
+      //measures_usage = measures_usage * -1;
+
+      // EACH AVERAGE SAMPLE ISN'T REALLY ONE-A-DAY AND THEREFORE THIS ISN'T A 
+      // 7 DAY MOVING AVERAGE.
+
+
+
+      var timeFormat = 'MM/DD/YYYY HH:mm';
+
+      function newDate(days) {
+        return moment().add(days, 'd').toDate();
+      }
+
+      function newDateUNIX(timestamp) {
+        return moment.unix(timestamp)
+      }
+
+      function newDateString(days) {
+        return moment().add(days, 'd').format(timeFormat);
+      }
+
+
+
+      var color = Chart.helpers.color;
+
+      function createConfig(name, x_label, x_data, y_label, y_data) {
+        //var config = 
+        return {
+          type: 'line',
+          data: {
+            labels: x_data,
+            datasets: [{
+              lineTension: 0,
+              label: y_label,
+              backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+              pointRadius: 1,
+              borderCapStyle: "square",
+              borderColor: window.chartColors.red,
+              fill: false,
+              data: y_data
+            }]
+          },
+          options: {
+            legend: {
+              display: false,
+            },
+            title: {
+              text: name,
+              display: true,
+            },
+            scales: {
+              xAxes: [{
+                type: 'time',
+                time: {
+                  parser: timeFormat,
+                  tooltipFormat: 'll HH:mm',
+                  //unit: "hour"
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: x_label
+                }
+              }],
+              yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: y_label
+                }
+              }]
+            },
+          }
+        }
+      };
+      /*
+                    window.onload = function() {
+                      var ctx = document.getElementById('canvas-balance').getContext('2d');
+                      window.myLine = new Chart(ctx, config);
+                      var ctx = document.getElementById("canvas-usage").getContext("2d");
+                      window.myLine = new Chart(ctx, config);
+                      var ctx = document.getElementById("canvas-usage-smooth").getContext("2d");
+                      window.myLine = new Chart(ctx, config);
+                      var ctx = document.getElementById("canvas-placeholder2").getContext("2d");
+                      window.myLine = new Chart(ctx, config);
+                
+                    };
+                    */
+      //window.onload = function() {
+      function paintGraph() {
+
+        console.log("Paintgraph ex.\n");
+        console.log("Measures has a length of " + measures.length);
+        console.log("tmsps has a length of " + tmsps.length);
+        var exes = [];
+        for (var i = 0; i < tmsps.length; i++) {
+          exes.push(newDateUNIX(tmsps[i]));
         };
+        console.log(exes[0]);
+        console.log(exes[exes.length - 1]);
+        console.log("exes has a length of " + exes.length);
+        var measures_usage = [];
 
-        getData().then(dataset => {
-            dataset;
-            dataset = dataset.split("\n");
 
-                for (var i = 0; i<dataset.length; i++) {
-                    dataset[i] = dataset[i].split(",");
-                    dataset[i][0] = parseInt(dataset[i][0])
-                    tmsps.push(dataset[i][0])
-                    dataset[i][1] = parseFloat(dataset[i][1])
-                    measures.push(dataset[i][1]);
+        for (var i = 0; i < measures.length; i++) {
+          if (!(i === 0)) {
+            measures_usage.push(-1 * (measures[i] - measures[i - 1]) / ((tmsps[i] - tmsps[i - 1]) / (60 * 60)));
+          } else {
+            measures_usage[i] = 0
+          }
+
+        }
+        for (var i = 0; i < measures_usage.length; i++) {
+          if (measures_usage[i] < 0) {
+            measures_usage[i] = measures_usage[i - 1]
+          }
+        }
+        console.log(measures_usage);
+
+        var measures_usage_kwhr = [];
+
+        for (var i = 0; i < measures_usage.length; i++) {
+
+          var val = (measures_usage[i] - 0.008333) / 0.1815;
+          if (val < 0) {
+            measures_usage_kwhr.push(0);
+          } else {
+            measures_usage_kwhr.push(val);
+          }
+        }
+        console.log("logging measures_usage_kwhr");
+        console.log(measures_usage_kwhr);
+
+        var measures_smooth = [];
+        for (var i = 0; i < measures.length; i++) {
+          if (i < 6) {
+            var sum = 0;
+            for (var j = 0; j < i + 1; j++) {
+              sum = sum + measures_usage[j];
+            }
+            measures_smooth.push(sum / (i + 1))
+          } else {
+            measures_smooth.push(
+              (measures_usage[i] + measures_usage[i - 1] + measures_usage[i - 2] + measures_usage[i - 3] +
+                measures_usage[i - 4] + measures_usage[i - 5] + measures_usage[i - 6]) / 7
+            )
+          }
+
+        }
+
+        var scatterValues = [];
+        console.log("logging scatterValues");
+        console.log(scatterValues);
+        //var scatter_dataset= [];
+        for (var i = 0; i < 250; i++) {
+          scatterValues.push({ //scatterChartData.datasets.data.push({
+            x: (tmsps[i] % (24 * 60 * 60)) / (60 * 60),
+            y: measures_usage_kwhr[i]
+          })
+          if (measures_usage_kwhr[i] < 0) {
+            console.log("Index " + i.toString() + " returned a negative value of " + measures_usage_kwhr[i].toString());
+            console.log(measures_usage_kwhr);
+          }
+
+        };
+        console.log("logging scatterValues");
+        console.log(scatterValues);
+        var scatterChartData = {
+          datasets: [{
+            label: 'Power usage at time of day',
+            borderColor: window.chartColors.red,
+            backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+            data: scatterValues
+          }]
+        };
+        var c = 0;
+        [{
+            id: 'Meter balance',
+            y_label: "Balance (£)",
+            x_data: exes,
+            x_label: "Date",
+            y_data: measures
+          }, {
+            id: 'Usage Costs',
+            x_label: "Date",
+            x_data: exes,
+            y_label: "Power usage (£/hr)",
+            y_data: measures_usage
+          }, {
+            id: 'Usage',
+            x_data: exes,
+            x_label: "Date",
+            y_data: measures_usage_kwhr,
+            y_label: "Power usage (kiloWatts)",
+          }
+          /*, {
+                                  id: 'This graph doesn\'t mean shit please ignore it',
+                                  x_data: exes,
+                                  x_label: "Time of Day",
+                                  y_data: measures_usage_kwhr,
+                                  y_label: "Power usage (£/hr)",
+                                }*/
+        ].forEach(function (details) {
+          c++;
+          console.log(details.id + "...")
+          var ctx = document.getElementById("canvas-" + c.toString()).getContext('2d');
+          var config = createConfig(details.id, details.x_label, details.x_data, details.y_label, details.y_data);
+          //createConfig(name, x_label, x_data, y_label, y_data)
+          new Chart(ctx, config);
+        });
+        var ctx = document.getElementById('canvas-4').getContext('2d');
+        window.myScatter = Chart.Scatter(ctx, {
+          data: scatterChartData,
+          options: {
+            title: {
+              display: true,
+              text: 'Power drawn per hour of day'
+            },
+            legend: {
+              display: false,
+            },
+            scales: {
+              xAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: "Time of Day (Hrs)"
                 }
-            if (isNaN(tmsps[tmsps.length-1])){
-                tmsps.splice(tmsps.length-1, 1);
-            }
-            if (isNaN(measures[measures.length-1])){
-                measures.splice(measures.length-1, 1);
-            } 
-            paintGraph();
-
-    });
-
-		//measures_usage = measures_usage * -1;
-
-		// EACH AVERAGE SAMPLE ISN'T REALLY ONE-A-DAY AND THEREFORE THIS ISN'T A 
-		// 7 DAY MOVING AVERAGE.
-
-
-
-		var timeFormat = 'MM/DD/YYYY HH:mm';
-
-		function newDate(days) {
-			return moment().add(days, 'd').toDate();
-		}
-
-		function newDateUNIX(timestamp) {
-			return moment.unix(timestamp)
-		}
-
-		function newDateString(days) {
-			return moment().add(days, 'd').format(timeFormat);
-		}
-
-
-
-		var color = Chart.helpers.color;
-		function createConfig(name, x_label, x_data, y_label, y_data) {
-			//var config = 
-			return {
-				type: 'line',
-				data: {
-					labels: x_data,
-					datasets: [{
-                        lineTension: 0,
-						label: y_label,
-						backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-						pointRadius: 1,
-						borderCapStyle: "square",
-                        borderColor: window.chartColors.red,
-						fill: false,
-						data: y_data
-					}]
-				},
-				options: {
-					legend: {
-						display: false,
-					},
-					title: {
-						text: name,
-						display: true,
-					},
-					scales: {
-						xAxes: [{
-							type: 'time',
-							time: {
-								parser: timeFormat,
-								tooltipFormat: 'll HH:mm',
-								//unit: "hour"
-							},
-							scaleLabel: {
-								display: true,
-								labelString: x_label
-							}
-						}],
-						yAxes: [{
-							scaleLabel: {
-								display: true,
-								labelString: y_label
-							}
-						}]
-					},
-				}
-			}
-		};
-		/*
-		window.onload = function() {
-			var ctx = document.getElementById('canvas-balance').getContext('2d');
-			window.myLine = new Chart(ctx, config);
-			var ctx = document.getElementById("canvas-usage").getContext("2d");
-			window.myLine = new Chart(ctx, config);
-			var ctx = document.getElementById("canvas-usage-smooth").getContext("2d");
-			window.myLine = new Chart(ctx, config);
-			var ctx = document.getElementById("canvas-placeholder2").getContext("2d");
-			window.myLine = new Chart(ctx, config);
-
-		};
-		*/
-		//window.onload = function() {
-		function paintGraph() {
-
-            console.log("Paintgraph ex.\n");
-            console.log("Measures has a length of "+measures.length);
-            console.log("tmsps has a length of "+tmsps.length);
-            var exes = [];
-		    for (var i = 0; i < tmsps.length; i++) {
-		    	exes.push(newDateUNIX(tmsps[i]));
-		    };
-            console.log(exes[0]);
-            console.log(exes[exes.length-1]);
-            console.log("exes has a length of "+exes.length);
-            var measures_usage = [];
-
-
-            for (var i = 0; i < measures.length; i++) {
-                if (!(i === 0)) {
-                    measures_usage.push(-1 * (measures[i]-measures[i-1])/((tmsps[i]-tmsps[i-1])/(60*60)));
-                } else {
-                    measures_usage[i] = 0
+              }],
+              yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: "Power drawn (kiloWatt)"
                 }
-                
-            }
-            for (var i = 0; i < measures_usage.length; i++){
-                    if (measures_usage[i] < 0){
-                        measures_usage[i] = measures_usage[i-1]
-                    }
-            }
-			console.log(measures_usage);
+              }]
+            },
+          }
+        });
 
-			var measures_usage_kwhr = [];
+      };
+    </script>
+    </div>
+    </div>
+    </div>
+    </div>
+  </main>
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+          <p class="mb-1">© Made with love, R. Minarro</p>
+      </div>
+    </div>
+  </footer>
+</body>
 
-			for (var i = 0; i < measures_usage.length; i++){
-
-				var val = (measures_usage[i] - 0.008333) / 0.1815;
-				if (val < 0) {
-						measures_usage_kwhr.push(0);
-					}else{
-						measures_usage_kwhr.push(val);
-					}
-			}
-			console.log("logging measures_usage_kwhr");
-			console.log(measures_usage_kwhr);
-			
-            var measures_smooth = [];
-            for (var i = 0; i < measures.length; i++) {
-                if (i < 6) {
-                    var sum = 0;
-                    for (var j = 0; j < i+1;j++) {
-                        sum = sum + measures_usage[j];
-                    }
-                    measures_smooth.push(sum/(i+1))
-                } else {
-                    measures_smooth.push(
-                        (measures_usage[i] + measures_usage[i-1] + measures_usage[i-2] + measures_usage[i-3]
-                        + measures_usage[i-4] + measures_usage[i-5] + measures_usage[i-6])/7
-                    )
-                }
-                
-            }
-
-			var scatterValues = [];
-			console.log("logging scatterValues");
-			console.log(scatterValues);
-			//var scatter_dataset= [];
-			for (var i = 0; i < 250; i++) {
-					scatterValues.push({//scatterChartData.datasets.data.push({
-						x : (tmsps[i] % (24*60*60)) / (60*60),
-						y : measures_usage_kwhr[i]
-					})
-					if (measures_usage_kwhr[i] < 0) {
-						console.log("Index "+i.toString()+" returned a negative value of "+measures_usage_kwhr[i].toString());
-						console.log(measures_usage_kwhr);
-					}
-					
-			};
-			console.log("logging scatterValues");
-			console.log(scatterValues);
-			var scatterChartData = {
-				datasets: [{
-					label: 'Power usage at time of day',
-					borderColor: window.chartColors.red,
-					backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
-					data: scatterValues
-				}]
-			};
-			var c = 0;
-            [{
-				id: 'Meter balance',
-				y_label: "Balance (£)",
-				x_data: exes,
-				x_label: "Date",
-				y_data: measures
-			}, {
-				id: 'Usage Costs',
-				x_label: "Date",
-				x_data: exes,
-				y_label: "Power usage (£/hr)",
-				y_data: measures_usage
-			}, {
-				id: 'Usage',
-				x_data: exes,
-				x_label: "Date",
-				y_data: measures_usage_kwhr,
-				y_label: "Power usage (kiloWatts)",
-			}/*, {
-				id: 'This graph doesn\'t mean shit please ignore it',
-				x_data: exes,
-				x_label: "Time of Day",
-				y_data: measures_usage_kwhr,
-				y_label: "Power usage (£/hr)",
-			}*/].forEach(function(details) {
-				c++;
-				console.log(details.id+"...")
-				var ctx = document.getElementById("canvas-"+c.toString()).getContext('2d');
-				var config = createConfig(details.id, details.x_label, details.x_data, details.y_label, details.y_data);
-							//createConfig(name, x_label, x_data, y_label, y_data)
-				new Chart(ctx, config);
-			});
-			var ctx = document.getElementById('canvas-4').getContext('2d');
-			window.myScatter = Chart.Scatter(ctx, {
-				data: scatterChartData,
-				options: {
-					title: {
-						display: true,
-						text: 'Power drawn per hour of day'
-					},
-					legend: {
-						display: false,
-					},
-					scales: {
-						xAxes: [{
-							scaleLabel: {
-								display: true,
-								labelString: "Time of Day (Hrs)"
-							}
-						}],
-						yAxes: [{
-							scaleLabel: {
-								display: true,
-								labelString: "Power drawn (kiloWatt)"
-							}
-						}]
-					},
-				}
-			});
-
-		};
-
-	</script>
-
-
-
-</body></html>
+</html>
