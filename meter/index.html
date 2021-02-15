@@ -30,18 +30,18 @@
 <body>
 	<div class="container">
 		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-balance" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+			<canvas id="canvas-1" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
 		</div>
 		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-usage" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+			<canvas id="canvas-2" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
 		</div>
 	
 		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-usage-smooth" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+			<canvas id="canvas-3" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
 		</div>
 		
 		<div class="chart-container"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-			<canvas id="canvas-placeholder2" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
+			<canvas id="canvas-4" style="display: block; height: 250px; width: 500px;" width="750" height="375" class="chartjs-render-monitor"></canvas>
 		</div>
 		
 	</div>
@@ -70,6 +70,9 @@
                 }
             if (isNaN(tmsps[tmsps.length-1])){
                 tmsps.splice(tmsps.length-1, 1);
+            }
+            if (isNaN(measures[measures.length-1])){
+                measures.splice(measures.length-1, 1);
             } 
             paintGraph();
 
@@ -129,7 +132,8 @@
 							type: 'time',
 							time: {
 								parser: timeFormat,
-								tooltipFormat: 'll HH:mm'
+								tooltipFormat: 'll HH:mm',
+								//unit: "hour"
 							},
 							scaleLabel: {
 								display: true,
@@ -185,9 +189,17 @@
             }
             for (var i = 0; i < measures_usage.length; i++){
                     if (measures_usage[i] < 0){
-                        measures_usage[i] = 0
+                        measures_usage[i] = measures_usage[i-1]
                     }
             }
+			console.log(measures_usage);
+
+			var measures_usage_kwhr = [];
+
+			for (var i = 0; i < measures_usage.length; i++){
+				measures_usage_kwhr.push((measures_usage[i] - 0.008333) / 0.1815) // STANDING CHARGE IS 20 PENCE PER DAY, OR 0.00833 POUNDS PER HR EQUIVALENT. KWHR IS 0.1815 POUNDS
+			}
+
             var measures_smooth = [];
             for (var i = 0; i < measures.length; i++) {
                 if (i < 6) {
@@ -204,33 +216,35 @@
                 }
                 
             }
+			var c = 0;
             [{
-				id: 'canvas-balance',
+				id: 'Meter balance',
 				y_label: "Balance (£)",
 				x_data: exes,
 				x_label: "Date",
 				y_data: measures
 			}, {
-				id: 'canvas-usage',
+				id: 'Usage Costs',
 				x_label: "Date",
 				x_data: exes,
 				y_label: "Power usage (£/hr)",
 				y_data: measures_usage
 			}, {
-				id: 'canvas-usage-smooth',
+				id: 'Usage',
 				x_data: exes,
 				x_label: "Date",
-				y_data: measures_smooth,
-				y_label: "Power usage (£/hr)",
+				y_data: measures_usage_kwhr,
+				y_label: "Power usage (kiloWatts)",
 			}, {
-				id: 'canvas-placeholder2',
+				id: 'This graph doesn\'t mean shit please ignore it',
 				x_data: exes,
 				x_label: "Date",
 				y_data: measures_smooth,
 				y_label: "Power usage (£/hr)",
 			}].forEach(function(details) {
+				c++;
 				console.log(details.id+"...")
-				var ctx = document.getElementById(details.id).getContext('2d');
+				var ctx = document.getElementById("canvas-"+c.toString()).getContext('2d');
 				var config = createConfig(details.id, details.x_label, details.x_data, details.y_label, details.y_data);
 							//createConfig(name, x_label, x_data, y_label, y_data)
 				new Chart(ctx, config);
